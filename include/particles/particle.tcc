@@ -521,7 +521,6 @@ template <unsigned Tdim>
 void mpm::Particle<Tdim>::map_mass_momentum_to_nodes() noexcept {
   // Check if particle mass is set
   assert(mass_ != std::numeric_limits<double>::max());
-
   // Map mass and momentum to nodes
   for (unsigned i = 0; i < nodes_.size(); ++i) {
     nodes_[i]->update_mass(true, mpm::ParticlePhase::Solid,
@@ -645,15 +644,24 @@ template <unsigned Tdim>
 void mpm::Particle<Tdim>::compute_strain(double dt) noexcept {
   // Assign strain rate
   strain_rate_ = this->compute_strain_rate(dn_dx_, mpm::ParticlePhase::Solid);
-  // Update dstrain
-  dstrain_ = strain_rate_ * dt;
-  // Update strain
-  strain_ += dstrain_;
-
   // Compute at centroid
   // Strain rate for reduced integration
   const Eigen::Matrix<double, 6, 1> strain_rate_centroid =
       this->compute_strain_rate(dn_dx_centroid_, mpm::ParticlePhase::Solid);
+
+  // Update dstrain
+  dstrain_ = strain_rate_ * dt;
+  if (Tdim == 2) { // B bar method
+    dstrain_[0] += 0.5*dt*(strain_rate_centroid[0]+strain_rate_centroid[1])
+                  - 0.5*dt*(strain_rate_[0]+strain_rate_[1]);
+    dstrain_[1] += 0.5*dt*(strain_rate_centroid[0]+strain_rate_centroid[1])
+                  - 0.5*dt*(strain_rate_[0]+strain_rate_[1]);
+  }
+
+  // Update strain
+  strain_ += dstrain_;
+
+
 
   // Assign volumetric strain at centroid
   dvolumetric_strain_ = dt * strain_rate_centroid.head(Tdim).sum();
@@ -665,11 +673,14 @@ template <unsigned Tdim>
 void mpm::Particle<Tdim>::compute_stress() noexcept {
   // Check if material ptr is valid
   assert(this->material() != nullptr);
-  // Calculate stress
-  this->stress_ =
-      (this->material())
-          ->compute_stress(stress_, dstrain_, this,
-                           &state_variables_[mpm::ParticlePhase::Solid]);
+  // Calculate stress: substepping
+  double deps_tol = 1e-4;
+  int n_step = static_cast<int>(dstrain_.norm()/deps_tol) + 1;
+  for (int i=0; i < n_step; i++)
+    this->stress_ =
+        (this->material())
+            ->compute_stress(stress_, dstrain_/static_cast<double>(n_step), this,
+                             &state_variables_[mpm::ParticlePhase::Solid]);
 }
 
 //! Map body force
@@ -703,6 +714,13 @@ inline void mpm::Particle<2>::map_internal_force() noexcept {
     Eigen::Matrix<double, 2, 1> force;
     force[0] = dn_dx_(i, 0) * stress_[0] + dn_dx_(i, 1) * stress_[3];
     force[1] = dn_dx_(i, 1) * stress_[1] + dn_dx_(i, 0) * stress_[3];
+//    // B bar method to avoid volumetric locking
+//    force[0] = 0.5*(dn_dx_centroid_(i, 0)+dn_dx_(i, 0))*stress_[0] +
+//               0.5*(dn_dx_centroid_(i, 0)-dn_dx_(i, 0))*stress_[1] +
+//               dn_dx_(i, 1)*stress_[3];
+//    force[1] = 0.5*(dn_dx_centroid_(i, 1)-dn_dx_(i, 1))*stress_[0] +
+//               0.5*(dn_dx_centroid_(i, 1)+dn_dx_(i, 1))*stress_[1] +
+//               dn_dx_(i, 0)*stress_[3];
 
     force *= -1. * this->volume_;
 

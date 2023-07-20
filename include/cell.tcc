@@ -262,6 +262,22 @@ void mpm::Cell<Tdim>::compute_mean_length() {
   this->mean_length_ /= indices.rows();
 }
 
+//! Compute min length of cell
+template <unsigned Tdim>
+void mpm::Cell<Tdim>::compute_min_length() {
+  // Get the indices of sub-striangles
+  Eigen::MatrixXi indices = element_->sides_indices();
+  this->min_length_ = 0;
+  // Calculate the min length
+  double tmp;
+  for (unsigned int i = 0; i < indices.rows(); ++i) {
+    tmp = (nodes_[indices(i, 0)]->coordinates()-
+           nodes_[indices[i, 1]]->coordinates()).norm();
+    if (i == 0 or this->min_length_ > tmp)
+      this->min_length_ = tmp;
+  }
+}
+
 //! Check if a point is in a 1D cell by checking bounding box range
 template <>
 inline bool mpm::Cell<1>::point_in_cartesian_cell(

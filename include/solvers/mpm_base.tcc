@@ -63,7 +63,17 @@ mpm::MPMBase<Tdim>::MPMBase(const std::shared_ptr<IO>& io) : mpm::MPM(io) {
 
     // Velocity update
     try {
-      velocity_update_ = analysis_["velocity_update"].template get<bool>();
+      std::string tmp = analysis_["velocity_update"].template get<std::string>();
+      // velocity_update_ = analysis_["velocity_update"].template get<bool>();
+      if (tmp == "pic")
+        velocity_update_ = true;
+      else if (tmp == "flip")
+        velocity_update_ = false;
+      else {
+        console_->warn("{} #{}: Unrecognized velocity_update parameter, use default as flip.",
+                       __FILE__, __LINE__);
+        velocity_update_ = false;
+      }
     } catch (std::exception& exception) {
       console_->warn(
           "{} #{}: Velocity update parameter is not specified, using default "
@@ -469,8 +479,9 @@ bool mpm::MPMBase<Tdim>::checkpoint_resume() {
                    this->nsteps_);
 
   } catch (std::exception& exception) {
-    console_->info("{} {} Resume failed, restarting analysis: {}", __FILE__,
+    console_->error("{} {} Resume failed, restarting analysis: {}", __FILE__,
                    __LINE__, exception.what());
+    throw std::runtime_error("Please double check!");
     this->step_ = 0;
     checkpoint = false;
   }

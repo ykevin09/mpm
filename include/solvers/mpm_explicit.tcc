@@ -36,6 +36,28 @@ void mpm::MPMExplicit<Tdim>::compute_stress_strain(unsigned phase) {
       &mpm::ParticleBase<Tdim>::compute_stress, std::placeholders::_1));
 }
 
+//! MPM Explicit compute critical time step
+template <unsigned Tdim>
+void mpm::MPMExplicit<Tdim>::compute_critical_time_step() {
+  double lmin = 0.1;
+  double E = 1e7, nu = 0.3;
+  double M = E*(1.+nu)/((1.+nu)*(1.-2.*nu));
+  double rho = 2650.*(1.-0.4);
+  double v_vol = std::sqrt(M/rho);
+
+  double vx = 0.;
+  std::string attribute = "velocities";
+  for (const auto & pvel: mesh_->particles_vector_data(attribute)) {
+    for (int i=0; i < pvel.size(); i++)
+      if (vx < std::fabs(pvel[i]))
+        vx = std::fabs(pvel[i]);
+  }
+
+  console_->info("v_max={} v_vol={}", vx, v_vol);
+
+  this->dt_ = lmin/(vx+v_vol)*0.1;
+}
+
 //! MPM Explicit solver
 template <unsigned Tdim>
 bool mpm::MPMExplicit<Tdim>::solve() {
@@ -124,7 +146,9 @@ bool mpm::MPMExplicit<Tdim>::solve() {
   // Main loop
   for (; step_ < nsteps_; ++step_) {
 
-    if (mpi_rank == 0) console_->info("Step: {} of {}.\n", step_, nsteps_);
+    if (mpi_rank == 0 && step_ % output_steps_ == 0) {
+      console_->info("Step: {} of {}.", step_, nsteps_);
+    }
 
 #ifdef USE_MPI
 #ifdef USE_GRAPH_PARTITIONING
@@ -133,6 +157,8 @@ bool mpm::MPMExplicit<Tdim>::solve() {
       this->mpi_domain_decompose(false);
 #endif
 #endif
+
+//    this->compute_critical_time_step();
 
     // Inject particles
     mesh_->inject_particles(step_ * dt_);

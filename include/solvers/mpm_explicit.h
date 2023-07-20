@@ -26,6 +26,9 @@ class MPMExplicit : public MPMBase<Tdim> {
   //! \param[in] phase Phase to smooth pressure
   void compute_stress_strain(unsigned phase);
 
+  //! Clculate critical time step
+  void compute_critical_time_step();
+
  protected:
   // Generate a unique id for the analysis
   using mpm::MPMBase<Tdim>::uuid_;

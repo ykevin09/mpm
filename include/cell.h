@@ -166,6 +166,12 @@ class Cell {
   //! Return the mean_length
   double mean_length() const { return mean_length_; }
 
+  //! Compute min length of cell
+  void compute_min_length();
+
+  //! Return the min_length
+  double min_length() const { return min_length_; }
+
   //! Return nodal coordinates
   Eigen::MatrixXd nodal_coordinates() const { return nodal_coordinates_; }
 
@@ -241,6 +247,8 @@ class Cell {
   VectorDim centroid_;
   //! mean_length of cell
   double mean_length_{std::numeric_limits<double>::max()};
+  //! min_length of cell
+  double min_length_{std::numeric_limits<double>::max()};
   //! particles ids in cell
   std::vector<Index> particles_;
   //! Number of global nparticles
