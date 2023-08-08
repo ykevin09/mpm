@@ -500,8 +500,10 @@ void mpm::Particle<Tdim>::update_volume() noexcept {
   assert(cell_ != nullptr && volume_ != std::numeric_limits<double>::max());
   // Compute at centroid
   // Strain rate for reduced integration
-  this->volume_ *= (1. + dvolumetric_strain_);
-  this->mass_density_ = this->mass_density_ / (1. + dvolumetric_strain_);
+//  this->volume_ *= (1. + dvolumetric_strain_);
+//  this->mass_density_ = this->mass_density_ / (1. + dvolumetric_strain_);
+  this->volume_ *= std::exp(dvolumetric_strain_);
+  this->mass_density_ = this->mass_ / this->volume_;
 }
 
 // Compute mass of particle
@@ -650,22 +652,23 @@ void mpm::Particle<Tdim>::compute_strain(double dt) noexcept {
       this->compute_strain_rate(dn_dx_centroid_, mpm::ParticlePhase::Solid);
 
   // Update dstrain
+  this->dt_ = dt;
   dstrain_ = strain_rate_ * dt;
-  if (Tdim == 2) { // B bar method
-    dstrain_[0] += 0.5*dt*(strain_rate_centroid[0]+strain_rate_centroid[1])
-                  - 0.5*dt*(strain_rate_[0]+strain_rate_[1]);
-    dstrain_[1] += 0.5*dt*(strain_rate_centroid[0]+strain_rate_centroid[1])
-                  - 0.5*dt*(strain_rate_[0]+strain_rate_[1]);
-  }
+//  if (Tdim == 2) { // B bar method
+//    dstrain_[0] += 0.5*dt*(strain_rate_centroid[0]+strain_rate_centroid[1])
+//                  - 0.5*dt*(strain_rate_[0]+strain_rate_[1]);
+//    dstrain_[1] += 0.5*dt*(strain_rate_centroid[0]+strain_rate_centroid[1])
+//                  - 0.5*dt*(strain_rate_[0]+strain_rate_[1]);
+//  }
 
   // Update strain
   strain_ += dstrain_;
 
-
-
   // Assign volumetric strain at centroid
-  dvolumetric_strain_ = dt * strain_rate_centroid.head(Tdim).sum();
-  volumetric_strain_centroid_ += dvolumetric_strain_;
+  // dvolumetric_strain_ = dt * strain_rate_centroid.head(Tdim).sum();
+  // volumetric_strain_centroid_ += dvolumetric_strain_;
+  dvolumetric_strain_ = dt * strain_rate_.head(Tdim).sum();
+  volumetric_strain_centroid_ += dt * strain_rate_centroid.head(Tdim).sum();
 }
 
 // Compute stress
@@ -676,6 +679,7 @@ void mpm::Particle<Tdim>::compute_stress() noexcept {
   // Calculate stress: substepping
   double deps_tol = 1e-4;
   int n_step = static_cast<int>(dstrain_.norm()/deps_tol) + 1;
+  this->dt_ = this->dt_/static_cast<double>(n_step);
   for (int i=0; i < n_step; i++)
     this->stress_ =
         (this->material())

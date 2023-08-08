@@ -90,6 +90,9 @@ class ParticleBase {
   //! Return id of the particleBase
   Index id() const { return id_; }
 
+  //! Return dt of the particleBase
+  virtual double dt() const = 0;
+
   //! Assign coordinates
   //! \param[in] coord Assign coord as coordinates of the particleBase
   void assign_coordinates(const VectorDim& coord) { coordinates_ = coord; }

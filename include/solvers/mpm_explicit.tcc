@@ -41,7 +41,7 @@ template <unsigned Tdim>
 void mpm::MPMExplicit<Tdim>::compute_critical_time_step() {
   double lmin = 0.1;
   double E = 1e7, nu = 0.3;
-  double M = E*(1.+nu)/((1.+nu)*(1.-2.*nu));
+  double M = E*(1.-nu)/((1.+nu)*(1.-2.*nu));
   double rho = 2650.*(1.-0.4);
   double v_vol = std::sqrt(M/rho);
 
@@ -114,7 +114,7 @@ bool mpm::MPMExplicit<Tdim>::solve() {
     mesh_->iterate_over_particles(std::bind(
         &mpm::ParticleBase<Tdim>::compute_mass, std::placeholders::_1));
 
-  bool initial_step = (resume == true) ? false : true;
+  bool initial_step = !(resume == true);
   // Check point resume
   if (resume) {
     this->checkpoint_resume();

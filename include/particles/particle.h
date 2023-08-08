@@ -157,6 +157,9 @@ class Particle : public ParticleBase<Tdim> {
   //! Return mass of the particles
   double mass() const override { return mass_; }
 
+  //! Return dt of the particles
+  double dt() const override { return dt_; }
+
   //! Assign material
   //! \param[in] material Pointer to a material
   //! \param[in] phase Index to indicate phase
@@ -356,6 +359,8 @@ class Particle : public ParticleBase<Tdim> {
   using ParticleBase<Tdim>::state_variables_;
   //! Neighbour particles
   using ParticleBase<Tdim>::neighbours_;
+  //! Time step size
+  double dt_{1e-4};
   //! Volumetric mass density (mass / volume)
   double mass_density_{0.};
   //! Mass

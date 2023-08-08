@@ -5,6 +5,7 @@
 #include "mohr_coulomb.h"
 #include "newtonian.h"
 #include "norsand.h"
+#include "dunatunga_kamrin.h"
 
 // Bingham 2D
 static Register<mpm::Material<2>, mpm::Bingham<2>, unsigned, const Json&>
@@ -55,3 +56,11 @@ static Register<mpm::Material<2>, mpm::NorSand<2>, unsigned, const Json&>
 // Norsand 3D
 static Register<mpm::Material<3>, mpm::NorSand<3>, unsigned, const Json&>
     nor_sand_3d("NorSand3D");
+
+// DunatungaKamrin 2D
+static Register<mpm::Material<2>, mpm::DunatungaKamrin<2>, unsigned, const Json&>
+    dunatunga_kamrin_2d("DunatungaKamrin2D");
+
+// DunatungaKamrin 3D
+static Register<mpm::Material<3>, mpm::DunatungaKamrin<3>, unsigned, const Json&>
+    dunatunga_kamrin_3d("DunatungaKamrin3D");
