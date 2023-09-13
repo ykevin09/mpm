@@ -1,8 +1,11 @@
+cmake_minimum_required(VERSION 3.12)
+
 project(mpm LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
-
-cmake_minimum_required(VERSION 3.12)
+#Linux Platform: Lab, Sockeye
+set(PC_LAB OFF)
+set(HPC_SOCKEYE ON)
 
 SET(CMAKE_COLOR_MAKEFILE ON)
 SET(CMAKE_VERBOSE_MAKEFILE OFF)
@@ -97,20 +100,44 @@ if (MKL_FOUND)
   endif()
 endif()
 
-
-## KaHIP
-#if (MPI_FOUND)
-#  if (NO_KAHIP)
-#    find_package(KaHIP)
-#  else()
-#    find_package(KaHIP REQUIRED)
-#  endif()
-#if (KAHIP_FOUND)
-#  add_definitions("-DUSE_GRAPH_PARTITIONING")
-#  include_directories(${KAHIP_INCLUDE_DIRS})
-#  link_libraries(${KAHIP_LIBRARIES})
-#endif()
-#endif()
+# KaHIP
+if(${CMAKE_SYSTEM_NAME} MATCHES Darwin)
+  set(KAHIP_ROOT "/Users/myang/Documents/1-Programming/0-Source/kahip")
+  set(KAHIP_INCLUDE_PATH "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy")
+  set(KAHIP_LIB_PATH "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy/libkahip.dylib"
+          "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy/libparhip.a"
+          "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy/parallel/libkahip.a"
+  )
+elseif(${CMAKE_SYSTEM_NAME} MATCHES Linux)
+  if(${PC_LAB})
+    set(KAHIP_ROOT "/home/lab/0-Source/kahip")
+    set(KAHIP_INCLUDE_PATH "/home/lab/0-Source/kahip/deploy")
+    set(KAHIP_LIB_PATH "/home/lab/0-Source/kahip/deploy/libkahip.so"
+            "/home/lab/0-Source/kahip/deploy/libparhip.a"
+            "/home/lab/0-Source/kahip/deploy/parallel/libkahip.a")
+  elseif(${HPC_SOCKEYE})
+    set(KAHIP_ROOT "/home/yangm15/0-Source/kahip")
+    set(KAHIP_INCLUDE_PATH "/home/yangm15/0-Source/kahip/deploy")
+    set(KAHIP_LIB_PATH "/home/yangm15/0-Source/kahip/deploy/libkahip.so
+      /home/yangm15/0-Source/kahip/deploy/libparhip.a
+      /home/yangm15/0-Source/kahip/deploy/parallel/libkahip.a")
+  endif()
+endif()
+if (MPI_FOUND)
+  if (NO_KAHIP)
+    find_package(KaHIP)
+  else()
+    set(KaHIP_DIR ${KAHIP_ROOT})
+    find_package(KaHIP REQUIRED)
+  endif()
+  if (KAHIP_FOUND)
+    add_definitions("-DUSE_GRAPH_PARTITIONING")
+    set(KAHIP_INCLUDE_DIRS "${KAHIP_INCLUDE_PATH}")
+    set(KAHIP_LIBRARIES "${KAHIP_LIB_PATH}")
+    include_directories(${KAHIP_INCLUDE_DIRS})
+    link_libraries(${KAHIP_LIBRARIES})
+  endif()
+endif()
 
 # VTK
 find_package(VTK)

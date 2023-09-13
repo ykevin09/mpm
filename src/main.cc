@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
   // Allocate enough space to issue the buffered send
   int mpi_buffer_size = 2000000000;
   void* mpi_buffer = malloc(mpi_buffer_size);
-  // Pass the buffer allocated to MPI so it uses it when we issue MPI_Bsend
+  // Pass the buffer allocated to MPI, so it uses it when we issue MPI_Bsend
   MPI_Buffer_attach(mpi_buffer, mpi_buffer_size);
 
 #endif

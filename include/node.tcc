@@ -388,7 +388,7 @@ void mpm::Node<Tdim, Tdof, Tnphases>::apply_friction_constraints(double dt) {
     const unsigned phase = 0;
 
     // Acceleration and velocity
-    double acc_n, acc_t, vel_t;
+    double acc_n, acc_t, vel_n, vel_t;
 
     if (Tdim == 2) {
       // tangential direction to boundary
@@ -400,6 +400,7 @@ void mpm::Node<Tdim, Tdof, Tnphases>::apply_friction_constraints(double dt) {
         acc_n = this->acceleration_(dir_n, phase);
         acc_t = this->acceleration_(dir_t, phase);
         // Velocity tangential
+        vel_n = this->velocity_(dir_n, phase);
         vel_t = this->velocity_(dir_t, phase);
       } else {
         // General case, transform to local coordinate
@@ -414,32 +415,37 @@ void mpm::Node<Tdim, Tdof, Tnphases>::apply_friction_constraints(double dt) {
         // Normal and tangential acceleration
         acc_n = local_acceleration(dir_n, phase);
         acc_t = local_acceleration(dir_t, phase);
-        // Velocity tangential
+        // Normal and tangential velocity
+        vel_n = local_velocity(dir_n, phase);
         vel_t = local_velocity(dir_t, phase);
       }
 
       if ((acc_n * sign_dir_n) > 0.0) {
         if (vel_t != 0.0) {  // kinetic friction
           const double vel_net = dt * acc_t + vel_t;
-          const double vel_frictional = dt * mu * std::abs(acc_n);
+          const double vel_frictional = dt * mu * std::abs(acc_n + vel_n/dt);
           if (std::abs(vel_net) <= vel_frictional)
             acc_t = -vel_t / dt;
-          else
-            acc_t -= sign(vel_net) * mu * std::abs(acc_n);
+          else {
+            acc_t -= sign(vel_net) * mu * std::abs(acc_n + vel_n / dt);
+          }
         } else {  // static friction
-          if (std::abs(acc_t) <= mu * std::abs(acc_n))
+          if (std::abs(acc_t) <= mu * std::abs(acc_n + vel_n/dt))
             acc_t = 0.0;
           else
-            acc_t -= sign(acc_t) * mu * std::abs(acc_n);
+            acc_t -= sign(acc_t) * mu * std::abs(acc_n + vel_n/dt);
         }
 
         if (!generic_boundary_constraints_) {
           // Cartesian case
           this->acceleration_(dir_t, phase) = acc_t;
+          acc_n = -vel_n/dt;
+          this->acceleration_(dir_n, phase) = acc_n;
         } else {
           // Local acceleration in terms of tangential and normal
           Eigen::Matrix<double, Tdim, Tnphases> acc;
           acc(dir_t, phase) = acc_t;
+          acc_n = -vel_n/dt;
           acc(dir_n, phase) = acc_n;
 
           // General case, transform to global coordinate
