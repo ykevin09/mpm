@@ -506,24 +506,6 @@ void mpm::MPMBase<Tdim>::write_hdf5(mpm::Index step, mpm::Index max_steps) {
 //! Write VTK files
 template <unsigned Tdim>
 void mpm::MPMBase<Tdim>::write_vtk(mpm::Index step, mpm::Index max_steps) {
-
-  // VTK PolyData writer
-  auto vtk_writer = std::make_unique<VtkWriter>(mesh_->particle_coordinates());
-
-  // Write mesh on step 0
-  // Get active node pairs use true
-  if (step % nload_balance_steps_ == 0)
-    vtk_writer->write_mesh(
-        io_->output_file("mesh", ".vtp", uuid_, step, max_steps).string(),
-        mesh_->nodal_coordinates(), mesh_->node_pairs(true));
-
-  // Write input geometry to vtk file
-  const std::string extension = ".vtp";
-  const std::string attribute = "geometry";
-  auto meshfile =
-      io_->output_file(attribute, extension, uuid_, step, max_steps).string();
-  vtk_writer->write_geometry(meshfile);
-
   // MPI parallel vtk file
   int mpi_rank = 0;
   int mpi_size = 1;
@@ -535,6 +517,45 @@ void mpm::MPMBase<Tdim>::write_vtk(mpm::Index step, mpm::Index max_steps) {
   // Get number of MPI ranks
   MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
 #endif
+
+  // VTK PolyData writer
+  auto vtk_writer = std::make_unique<VtkWriter>(mesh_->particle_coordinates());
+
+  // Write mesh on step 0
+  // Get active node pairs use true
+  if (step % nload_balance_steps_ == 0) {
+    vtk_writer->write_mesh(
+        io_->output_file("mesh", ".vtp", uuid_, step, max_steps).string(),
+        mesh_->nodal_coordinates(), mesh_->node_pairs(true));
+
+    // Write a parallel MPI VTK container file
+#ifdef USE_MPI
+    if (mpi_rank == 0 && mpi_size > 1) {
+      auto parallel_file = io_->output_file("mesh", ".pvtp", uuid_, step,
+                                            max_steps, write_mpi_rank).string();
+      vtk_writer->write_parallel_vtk(parallel_file, "mesh", mpi_size, step,
+                                     max_steps);
+    }
+#endif
+  }
+
+  // Write input geometry to vtk file
+  const std::string extension = ".vtp";
+  const std::string attribute = "geometry";
+  auto meshfile =
+      io_->output_file(attribute, extension, uuid_, step, max_steps).string();
+  vtk_writer->write_geometry(meshfile);
+
+  // Write a parallel MPI VTK container file
+#ifdef USE_MPI
+  if (mpi_rank == 0 && mpi_size > 1) {
+    auto parallel_file = io_->output_file(attribute, ".pvtp", uuid_, step,
+                                        max_steps, write_mpi_rank).string();
+    vtk_writer->write_parallel_vtk(parallel_file, attribute, mpi_size, step,
+                                 max_steps);
+  }
+#endif
+
 
   //! VTK scalar variables
   for (const auto& attribute : vtk_vars_.at(mpm::VariableType::Scalar)) {
