@@ -806,6 +806,9 @@ void mpm::Particle<Tdim>::compute_updated_position(
   Eigen::Matrix<double, Tdim, 1> nodal_velocity =
       Eigen::Matrix<double, Tdim, 1>::Zero();
 
+//  if (id_ == 987)
+//    console_->info("I am here!");
+
   for (unsigned i = 0; i < nodes_.size(); ++i)
     nodal_velocity +=
         shapefn_[i] * nodes_[i]->velocity(mpm::ParticlePhase::Solid);

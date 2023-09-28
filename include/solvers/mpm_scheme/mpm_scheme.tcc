@@ -198,12 +198,20 @@ inline void mpm::MPMScheme<Tdim>::compute_particle_kinematics(
 
 // Locate particles
 template <unsigned Tdim>
-inline void mpm::MPMScheme<Tdim>::locate_particles(bool locate_particles) {
+inline void mpm::MPMScheme<Tdim>::locate_particles(bool locate_particles, mpm::Index step) {
 
   auto unlocatable_particles = mesh_->locate_particles_mesh();
 
-  if (!unlocatable_particles.empty() && locate_particles)
+  if (!unlocatable_particles.empty() && locate_particles) {
+    for (const auto & part: unlocatable_particles) {
+      std::cerr << "At step " << step
+                << " MP ID " << part->id()
+                << " x=" << part->coordinates()[0]
+                << " y=" << part->coordinates()[1]
+                << std::endl;
+    }
     throw std::runtime_error("Particle outside the mesh domain");
+  }
   // If unable to locate particles remove particles
   if (!unlocatable_particles.empty() && !locate_particles)
     for (const auto& remove_particle : unlocatable_particles)

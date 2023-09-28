@@ -69,7 +69,7 @@ class MPMScheme {
   //! Compute particle location
   //! \param[in] locate_particles Flag to enable locate particles, if set to
   //! false, unlocated particles will be removed
-  virtual inline void locate_particles(bool locate_particles);
+  virtual inline void locate_particles(bool locate_particles, mpm::Index step);
 
   //! Stress update scheme
   //! \retval scheme Stress update scheme

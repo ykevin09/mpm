@@ -182,6 +182,8 @@ bool mpm::MPMExplicit<Tdim>::solve() {
     mpm_scheme_->compute_forces(gravity_, phase, step_,
                                 set_node_concentrated_force_);
 
+//    if (step_ == 340258)
+//      console_->info("I am here!");
     // Particle kinematics
     mpm_scheme_->compute_particle_kinematics(velocity_update_, phase, "Cundall",
                                              damping_factor_);
@@ -190,7 +192,7 @@ bool mpm::MPMExplicit<Tdim>::solve() {
     mpm_scheme_->postcompute_stress_strain(phase, pressure_smoothing_);
 
     // Locate particles
-    mpm_scheme_->locate_particles(this->locate_particles_);
+    mpm_scheme_->locate_particles(this->locate_particles_, step_);
 
 #ifdef USE_MPI
 #ifdef USE_GRAPH_PARTITIONING

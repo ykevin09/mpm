@@ -142,7 +142,7 @@ endif()
 # VTK
 find_package(VTK)
 # set(Qt5_DIR "$(brew --prefix qt5)/lib/cmake/Qt5")
-set(Qt5_DIR /opt/homebrew/opt/qt@5/lib/cmake/Qt5)
+# set(Qt5_DIR /opt/homebrew/opt/qt@5/lib/cmake/Qt5)
 if (VTK_FOUND)
   add_definitions("-DUSE_VTK")
   include_directories(${VTK_INCLUDE_DIRS})
