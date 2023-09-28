@@ -3,9 +3,10 @@ cmake_minimum_required(VERSION 3.12)
 project(mpm LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
-#Linux Platform: Lab, Sockeye
+#Linux Platform: Lab, Frontera Sockeye
 set(PC_LAB OFF)
-set(HPC_SOCKEYE ON)
+set(HPC_Frontera ON)
+set(HPC_SOCKEYE OFF)
 
 SET(CMAKE_COLOR_MAKEFILE ON)
 SET(CMAKE_VERBOSE_MAKEFILE OFF)
@@ -106,8 +107,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES Darwin)
   set(KAHIP_INCLUDE_PATH "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy")
   set(KAHIP_LIB_PATH "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy/libkahip.dylib"
           "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy/libparhip.a"
-          "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy/parallel/libkahip.a"
-  )
+          "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy/parallel/libkahip.a")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES Linux)
   if(${PC_LAB})
     set(KAHIP_ROOT "/home/lab/0-Source/kahip")
@@ -118,9 +118,15 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES Linux)
   elseif(${HPC_SOCKEYE})
     set(KAHIP_ROOT "/home/yangm15/0-Source/kahip")
     set(KAHIP_INCLUDE_PATH "/home/yangm15/0-Source/kahip/deploy")
-    set(KAHIP_LIB_PATH "/home/yangm15/0-Source/kahip/deploy/libkahip.so
-      /home/yangm15/0-Source/kahip/deploy/libparhip.a
-      /home/yangm15/0-Source/kahip/deploy/parallel/libkahip.a")
+    set(KAHIP_LIB_PATH "/home/yangm15/0-Source/kahip/deploy/libkahip.so"
+      "/home/yangm15/0-Source/kahip/deploy/libparhip.a"
+      "/home/yangm15/0-Source/kahip/deploy/parallel/libkahip.a")
+  elseif(${HPC_FRONTERA})
+    set(KAHIP_ROOT "/home1/05605/yangm15/0-Source/kahip")
+    set(KAHIP_INCLUDE_PATH "/home1/05605/yangm15/0-Source/kahip/deploy")
+    set(KAHIP_LIB_PATH "/home1/05605/yangm15/0-Source/kahip/deploy/libkahip.a"
+            "/home1/05605/yangm15/0-Source/kahip/deploy/libparhip.a"
+            "/home1/05605/yangm15/0-Source/kahip/deploy/parallel/libkahip.a")
   endif()
 endif()
 if (MPI_FOUND)
@@ -141,8 +147,6 @@ endif()
 
 # VTK
 find_package(VTK)
-# set(Qt5_DIR "$(brew --prefix qt5)/lib/cmake/Qt5")
-# set(Qt5_DIR /opt/homebrew/opt/qt@5/lib/cmake/Qt5)
 if (VTK_FOUND)
   add_definitions("-DUSE_VTK")
   include_directories(${VTK_INCLUDE_DIRS})
