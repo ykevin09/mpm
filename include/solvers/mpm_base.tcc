@@ -534,7 +534,7 @@ void mpm::MPMBase<Tdim>::write_vtk(mpm::Index step, mpm::Index max_steps) {
       auto parallel_file = io_->output_file("mesh", ".pvtp", uuid_, step,
                                             max_steps, write_mpi_rank).string();
       vtk_writer->write_parallel_vtk(parallel_file, "mesh", mpi_size, step,
-                                     max_steps);
+                                     max_steps, 1);
     }
 #endif
   }
@@ -552,7 +552,7 @@ void mpm::MPMBase<Tdim>::write_vtk(mpm::Index step, mpm::Index max_steps) {
     auto parallel_file = io_->output_file(attribute, ".pvtp", uuid_, step,
                                         max_steps, write_mpi_rank).string();
     vtk_writer->write_parallel_vtk(parallel_file, attribute, mpi_size, step,
-                                 max_steps);
+                                   max_steps, 1);
   }
 #endif
 
@@ -573,7 +573,7 @@ void mpm::MPMBase<Tdim>::write_vtk(mpm::Index step, mpm::Index max_steps) {
                                .string();
 
       vtk_writer->write_parallel_vtk(parallel_file, attribute, mpi_size, step,
-                                     max_steps);
+                                     max_steps, 1);
     }
 #endif
   }
