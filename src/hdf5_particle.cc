@@ -1,5 +1,54 @@
 #include "hdf5_particle.h"
 namespace mpm {
+// Default constructor
+HDF5Particle::HDF5Particle()
+  : id(0), mass(0.), volume(0.), pressure(0.),
+    coord_x(0.), coord_y(0.), coord_z(0.),
+    displacement_x(0.), displacement_y(0.), displacement_z(0.),
+    nsize_x(0.), nsize_y(0.), nsize_z(0.),
+    velocity_x(0.), velocity_y(0.), velocity_z(0.),
+    stress_xx(0.), stress_yy(0.), stress_zz(0.),
+    tau_xy(0.), tau_yz(0.), tau_xz(0.),
+    strain_xx(0.), strain_yy(0.), strain_zz(0.),
+    gamma_xy(0.), gamma_yz(0.), gamma_xz(0.),
+    epsilon_v(0.), cell_id(0), status(false), material_id(0), nstate_vars(0)
+{}
+
+// Copy constructor
+HDF5Particle::HDF5Particle(const HDF5Particle& particle)
+  : id(particle.id), mass(particle.mass), volume(particle.volume),
+    pressure(particle.pressure), coord_x(particle.coord_x),
+    coord_y(particle.coord_y), coord_z(particle.coord_z),
+    displacement_x(particle.displacement_x),
+    displacement_y(particle.displacement_y),
+    displacement_z(particle.displacement_z),
+    nsize_x(particle.nsize_x),
+    nsize_y(particle.nsize_y),
+    nsize_z(particle.nsize_z),
+    velocity_x(particle.velocity_x),
+    velocity_y(particle.velocity_y),
+    velocity_z(particle.velocity_z),
+    stress_xx(particle.stress_xx),
+    stress_yy(particle.stress_yy),
+    stress_zz(particle.stress_zz),
+    tau_xy(particle.tau_xy),
+    tau_yz(particle.tau_yz),
+    tau_xz(particle.tau_xz),
+    strain_xx(particle.strain_xx),
+    strain_yy(particle.strain_yy),
+    strain_zz(particle.strain_zz),
+    gamma_xy(particle.gamma_xy),
+    gamma_yz(particle.gamma_yz),
+    gamma_xz(particle.gamma_xz),
+    epsilon_v(particle.epsilon_v),
+    cell_id(particle.cell_id),
+    status(particle.status),
+    material_id(particle.material_id),
+    nstate_vars(particle.nstate_vars) {
+  for (unsigned i=0; i < 20; i++)
+    svars[i] = particle.svars[i];
+}
+
 namespace hdf5 {
 namespace particle {
 const size_t dst_offset[NFIELDS] = {

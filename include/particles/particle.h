@@ -71,7 +71,8 @@ class Particle : public ParticleBase<Tdim> {
 
   //! Retrun particle data as HDF5
   //! \retval particle HDF5 data of the particle
-  HDF5Particle hdf5() const override;
+  // HDF5Particle hdf5() const override;
+  std::shared_ptr<void> hdf5() const override;
 
   //! Initialise properties
   void initialise() override;

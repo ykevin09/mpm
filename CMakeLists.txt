@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(mpm LANGUAGES CXX)
+project(CBGeo LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
+set(mpm_SOURCE_DIR ${PROJECT_SOURCE_DIR})
+#
 #Linux Platform: Lab, Frontera Sockeye
 set(PC_LAB OFF)
 set(HPC_Frontera ON)

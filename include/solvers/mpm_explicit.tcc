@@ -158,7 +158,7 @@ bool mpm::MPMExplicit<Tdim>::solve() {
 #endif
 #endif
 
-//    this->compute_critical_time_step();
+    // this->compute_critical_time_step();
 
     // Inject particles
     mesh_->inject_particles(step_ * dt_);
@@ -182,8 +182,6 @@ bool mpm::MPMExplicit<Tdim>::solve() {
     mpm_scheme_->compute_forces(gravity_, phase, step_,
                                 set_node_concentrated_force_);
 
-//    if (step_ == 340258)
-//      console_->info("I am here!");
     // Particle kinematics
     mpm_scheme_->compute_particle_kinematics(velocity_update_, phase, "Cundall",
                                              damping_factor_);

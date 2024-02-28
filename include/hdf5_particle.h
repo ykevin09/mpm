@@ -44,6 +44,10 @@ typedef struct HDF5Particle {
   unsigned nstate_vars;
   // State variables (init to zero)
   double svars[20] = {0};
+  // Constructor
+  HDF5Particle();
+  // Copy constructor
+  HDF5Particle(const HDF5Particle& particle);
 } HDF5Particle;
 
 namespace hdf5 {
