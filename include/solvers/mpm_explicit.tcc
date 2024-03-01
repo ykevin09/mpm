@@ -158,8 +158,6 @@ bool mpm::MPMExplicit<Tdim>::solve() {
 #endif
 #endif
 
-    // this->compute_critical_time_step();
-
     // Inject particles
     mesh_->inject_particles(step_ * dt_);
 

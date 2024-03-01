@@ -807,9 +807,6 @@ void mpm::Particle<Tdim>::compute_updated_position(
   Eigen::Matrix<double, Tdim, 1> nodal_velocity =
       Eigen::Matrix<double, Tdim, 1>::Zero();
 
-//  if (id_ == 987)
-//    console_->info("I am here!");
-
   for (unsigned i = 0; i < nodes_.size(); ++i)
     nodal_velocity +=
         shapefn_[i] * nodes_[i]->velocity(mpm::ParticlePhase::Solid);
@@ -832,8 +829,10 @@ void mpm::Particle<Tdim>::compute_updated_position(
 
   // New position  current position + velocity * dt
   this->coordinates_ += nodal_velocity * dt;
+  // this->coordinates_ += this->velocity_ * dt;
   // Update displacement (displacement is initialized from zero)
   this->displacement_ += nodal_velocity * dt;
+  // this->displacement_ += this->velocity_ * dt;
 }
 
 //! Map particle pressure to nodes
