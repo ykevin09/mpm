@@ -41,6 +41,9 @@ struct Logger {
 
   // Create a logger for MPM Explicit USL
   static const std::shared_ptr<spdlog::logger> mpm_explicit_usl_logger;
+
+  // Create a logger for DDMP Explicit
+  static const std::shared_ptr<spdlog::logger> ddmp_explicit_logger;
 };
 
 }  // namespace mpm

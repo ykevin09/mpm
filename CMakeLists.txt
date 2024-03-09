@@ -105,37 +105,39 @@ endif()
 
 # KaHIP
 if(${CMAKE_SYSTEM_NAME} MATCHES Darwin)
-  set(KAHIP_ROOT "/Users/myang/Documents/1-Programming/0-Source/kahip")
+  set(KAHIP_ROOT0 "/Users/myang/Documents/1-Programming/0-Source/kahip")
   set(KAHIP_INCLUDE_PATH "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy")
   set(KAHIP_LIB_PATH "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy/libkahip.dylib"
           "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy/libparhip.a"
-          "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy/parallel/libkahip.a")
+          "/Users/myang/Documents/1-Programming/0-Source/kahip/deploy/parallel/libkahip.a"
+  )
 elseif(${CMAKE_SYSTEM_NAME} MATCHES Linux)
   if(${PC_LAB})
-    set(KAHIP_ROOT "/home/lab/0-Source/kahip")
+    set(KAHIP_ROOT0 "/home/lab/0-Source/kahip")
     set(KAHIP_INCLUDE_PATH "/home/lab/0-Source/kahip/deploy")
     set(KAHIP_LIB_PATH "/home/lab/0-Source/kahip/deploy/libkahip.so"
             "/home/lab/0-Source/kahip/deploy/libparhip.a"
             "/home/lab/0-Source/kahip/deploy/parallel/libkahip.a")
   elseif(${HPC_SOCKEYE})
-    set(KAHIP_ROOT "/home/yangm15/0-Source/kahip")
+    set(KAHIP_ROOT0 "/home/yangm15/0-Source/kahip")
     set(KAHIP_INCLUDE_PATH "/home/yangm15/0-Source/kahip/deploy")
     set(KAHIP_LIB_PATH "/home/yangm15/0-Source/kahip/deploy/libkahip.so"
       "/home/yangm15/0-Source/kahip/deploy/libparhip.a"
       "/home/yangm15/0-Source/kahip/deploy/parallel/libkahip.a")
   elseif(${HPC_FRONTERA})
-    set(KAHIP_ROOT "/home1/05605/yangm15/0-Source/kahip")
+    set(KAHIP_ROOT0 "/home1/05605/yangm15/0-Source/kahip")
     set(KAHIP_INCLUDE_PATH "/home1/05605/yangm15/0-Source/kahip/deploy")
     set(KAHIP_LIB_PATH "/home1/05605/yangm15/0-Source/kahip/deploy/libkahip.a"
             "/home1/05605/yangm15/0-Source/kahip/deploy/libparhip.a"
             "/home1/05605/yangm15/0-Source/kahip/deploy/parallel/libkahip.a")
   endif()
 endif()
+#
 if (MPI_FOUND)
   if (NO_KAHIP)
     find_package(KaHIP)
   else()
-    set(KaHIP_DIR ${KAHIP_ROOT})
+#    set(KaHIP_DIR ${KAHIP_ROOT0})
     find_package(KaHIP REQUIRED)
   endif()
   if (KAHIP_FOUND)

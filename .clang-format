@@ -1,7 +1,7 @@
 ---
 # BasedOnStyle:  CUED GeoMechanics
 AccessModifierOffset: -1
-ConstructorInitializerIndentWidth: 4
+ConstructorInitializerIndentWidth: 2
 AlignEscapedNewlinesLeft: true
 AlignTrailingComments: true
 AllowAllParametersOfDeclarationOnNextLine: true
@@ -42,6 +42,6 @@ SpaceInEmptyParentheses: false
 SpacesInCStyleCastParentheses: false
 SpaceAfterControlStatementKeyword: true
 SpaceBeforeAssignmentOperators: true
-ContinuationIndentWidth: 4
+ContinuationIndentWidth: 2
 ...
 

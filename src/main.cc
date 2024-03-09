@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
     // Create an MPM analysis
     auto mpm =
         Factory<mpm::MPM, const std::shared_ptr<mpm::IO>&>::instance()->create(
-            analysis, std::move(io));
+            analysis, io);
     // Solve
     mpm->solve();
 
@@ -67,6 +67,8 @@ int main(int argc, char** argv) {
 #endif
     std::terminate();
   }
+
+  std::cout << "I am here" << std::endl;
 
 #ifdef USE_MPI
   free(mpi_buffer);

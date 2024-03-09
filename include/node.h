@@ -1,6 +1,8 @@
 #ifndef MPM_NODE_H_
 #define MPM_NODE_H_
 
+#include <tsl/robin_map.h>
+
 #include "logger.h"
 #include "mutex.h"
 #include "nodal_properties.h"
@@ -264,6 +266,20 @@ class Node : public NodeBase<Tdim> {
   //! Compute multimaterial normal unit vector
   void compute_multimaterial_normal_unit_vector() override;
 
+  //! Return neighbour ids
+  std::set<mpm::Index> neighbours() const override { return neighbours_; }
+
+  //! Add a neighbour cell
+  //! \param[in] neighbour_id id of the neighbouring id
+  //! \retval insertion_status Return the successful addition of a node
+  bool add_neighbour(mpm::Index neighbour_id) override;
+
+  //! Add cell_id shared by node and a neighbour node
+  //! \param[in] neighbour_id id of the neighbouring id
+  //! \param[in] cell_id id of the shared cell
+  //! \retval insertion_status Return the successful addition of a node
+  bool add_map_cell_id(mpm::Index neighbour_id, mpm::Index cell_id);
+
  private:
   //! Mutex
   SpinMutex node_mutex_;
@@ -319,6 +335,11 @@ class Node : public NodeBase<Tdim> {
   std::unique_ptr<spdlog::logger> console_;
   //! MPI ranks
   std::set<unsigned> mpi_ranks_;
+
+  //! Container of node neighbour ids
+  std::set<mpm::Index> neighbours_;
+  //! Map of cell ids for neighours
+  tsl::robin_map<mpm::Index, std::set<mpm::Index>> map_cells_id_;
 };  // Node class
 }  // namespace mpm
 

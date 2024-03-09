@@ -182,6 +182,9 @@ class Mesh {
   //! Find cell neighbours
   void find_cell_neighbours();
 
+  //! Find node neighbors
+  void find_node_neighbours();
+
   //! Find global nparticles across MPI ranks / cell
   void find_nglobal_particles_cells();
 
