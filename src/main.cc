@@ -68,8 +68,6 @@ int main(int argc, char** argv) {
     std::terminate();
   }
 
-  std::cout << "I am here" << std::endl;
-
 #ifdef USE_MPI
   free(mpi_buffer);
   MPI_Buffer_detach(&mpi_buffer, &mpi_buffer_size);

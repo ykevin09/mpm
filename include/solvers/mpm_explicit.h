@@ -17,7 +17,7 @@ template <unsigned Tdim>
 class MPMExplicit : public MPMBase<Tdim> {
  public:
   //! Default constructor
-  MPMExplicit(const std::shared_ptr<IO>& io);
+  explicit MPMExplicit(const std::shared_ptr<IO>& io);
 
   //! Solve
   bool solve() override;

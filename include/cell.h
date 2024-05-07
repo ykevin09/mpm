@@ -228,7 +228,6 @@ class Cell {
   //! \param[in] point Coordinates of point
   bool approx_point_in_cell(const Eigen::Matrix<double, Tdim, 1>& point);
 
- private:
   //! Mutex
   std::mutex cell_mutex_;
   //! cell id

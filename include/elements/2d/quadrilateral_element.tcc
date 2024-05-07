@@ -48,13 +48,10 @@ inline Eigen::MatrixXd mpm::QuadrilateralElement<2, 4>::unit_cell_coordinates()
     const {
   // Coordinates of a unit cell
   Eigen::Matrix<double, 4, 2> unit_cell;
-  // clang-format off
   unit_cell << -1., -1.,
                 1., -1.,
                 1.,  1.,
-    // cppcheck-suppress *
                -1.,  1.;
-  // clang-format on
   return unit_cell;
 }
 
@@ -438,7 +435,6 @@ template <unsigned Tdim, unsigned Tnfunctions>
 inline Eigen::VectorXi
     mpm::QuadrilateralElement<Tdim, Tnfunctions>::corner_indices() const {
   Eigen::Matrix<int, 4, 1> indices;
-  // cppcheck-suppress *
   indices << 0, 1, 2, 3;
   return indices;
 }

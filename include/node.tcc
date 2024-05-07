@@ -638,29 +638,3 @@ void mpm::Node<Tdim, Tdof,
   node_mutex_.unlock();
 }
 
-//! Add a neighbour cell and return the status of addition of a node
-template <unsigned Tdim, unsigned Tdof, unsigned Tnphases>
-bool mpm::Node<Tdim, Tdof, Tnphases>::add_neighbour(mpm::Index neighbour_id)
-{
-  bool insertion_status = false;
-  try {
-    insertion_status = neighbours_.insert(neighbour_id).second;
-  } catch (std::exception& exception) {
-    console_->error("{} {}: {}\n", __FILE__, __LINE__, exception.what());
-  }
-  return insertion_status;
-}
-
-//! Add a cell shared by the node and a neighbour node
-template <unsigned Tdim, unsigned Tdof, unsigned Tnphases>
-bool mpm::Node<Tdim, Tdof, Tnphases>::add_map_cell_id(mpm::Index neighbour_id, mpm::Index cell_id)
-{
-  bool insertion_status = false;
-  try {
-    insertion_status = map_cells_id_[neighbour_id].insert(cell_id).second;
-  } catch (std::exception& exception) {
-    console_->error("{} {}: {}\n", __FILE__, __LINE__, exception.what());
-  }
-  return insertion_status;
-}
-

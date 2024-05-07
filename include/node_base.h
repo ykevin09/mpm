@@ -252,21 +252,6 @@ class NodeBase {
 
   //! Compute multimaterial normal unit vector
   virtual void compute_multimaterial_normal_unit_vector() = 0;
-
-  //! Return neighbour ids
-  virtual std::set<mpm::Index> neighbours() const = 0;
-
-  //! Add a neighbour node
-  //! \param[in] neighbour_id id of the neighbouring id
-  //! \retval insertion_status Return the successful addition of a node
-  virtual bool add_neighbour(mpm::Index neighbour_id) = 0;
-
-  //! Add cell_id shared by node and a neighbour node
-  //! \param[in] neighbour_id id of the neighbouring id
-  //! \param[in] cell_id id of the shared cell
-  //! \retval insertion_status Return the successful addition of a node
-  virtual bool add_map_cell_id(mpm::Index neighbour_id, mpm::Index cell_id) = 0;
-
 };  // NodeBase class
 }  // namespace mpm
 

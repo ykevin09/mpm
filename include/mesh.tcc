@@ -1,5 +1,3 @@
-#include "mesh.h"
-
 // Constructor with id
 template <unsigned Tdim>
 mpm::Mesh<Tdim>::Mesh(unsigned id, bool isoparametric)
@@ -288,24 +286,6 @@ void mpm::Mesh<Tdim>::find_cell_neighbours() {
     }
   }
 }
-
-//! Find nodes that share the cell
-template <unsigned Tdim>
-void mpm::Mesh<Tdim>::find_node_neighbours()
-{
-  for (auto citr = cells_.cbegin(); citr != cells_.cend(); ++citr) {
-    auto cell_id = (*citr)->id();
-    for (auto n0: (*citr)->nodes()) {
-      for (auto n1 : (*citr)->nodes()) {
-        auto n1_id = n1->id();
-        if (n0->neighbours().find(n1_id) == n0->neighbours().end())
-          n0->add_neighbour(n1_id);
-        n0->add_map_cell_id(n1_id, cell_id);
-      }
-    }
-  }
-}
-
 
 //! Find global number of particles across MPI ranks / cell
 template <unsigned Tdim>
