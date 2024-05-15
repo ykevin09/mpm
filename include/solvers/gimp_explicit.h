@@ -1,5 +1,5 @@
-#ifndef MPM_MPM_EXPLICIT_H_
-#define MPM_MPM_EXPLICIT_H_
+#ifndef MPM_GIMP_EXPLICIT_H_
+#define MPM_GIMP_EXPLICIT_H_
 
 #ifdef USE_GRAPH_PARTITIONING
 #include "graph.h"
@@ -9,15 +9,15 @@
 
 namespace mpm {
 
-//! MPMExplicit class
-//! \brief A class that implements the fully explicit one phase mpm
-//! \details A single-phase explicit MPM
+//! GIMPExplicit class
+//! \brief A class that implements the explicit one-phase mpm
+//! \brief A single-phase explicit GIMP-MPM
 //! \tparam Tdim Dimension
 template <unsigned Tdim>
-class MPMExplicit : public MPMBase<Tdim> {
+class GIMPExplicit : public MPMBase<Tdim> {
  public:
   //! Default constructor
-  explicit MPMExplicit(const std::shared_ptr<IO>& io);
+  explicit GIMPExplicit(const std::shared_ptr<IO>& io);
 
   //! Solve
   bool solve() override;
@@ -81,10 +81,9 @@ class MPMExplicit : public MPMBase<Tdim> {
   bool pressure_smoothing_{false};
   //! Interface
   bool interface_{false};
+}; // GIMPExplicit class
+}
 
-};  // MPMExplicit class
-}  // namespace mpm
+#include "gimp_explicit.tcc"
 
-#include "mpm_explicit.tcc"
-
-#endif  // MPM_MPM_EXPLICIT_H_
+#endif  // MPM_GIMP_EXPLICIT_H_

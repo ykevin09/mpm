@@ -24,13 +24,16 @@
 #endif
 
 namespace mpm {
+
+
+
 //! MPM class
 //! \brief MPM class calls solver and algorithm
 //! \details MPM class: implicit and explicit MPM
 class MPM {
  public:
   //! Constructor
-  MPM(const std::shared_ptr<IO>& io) : io_(io) {
+  explicit MPM(const std::shared_ptr<IO>& io) : io_(io) {
 
     analysis_ = io_->analysis();
 

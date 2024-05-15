@@ -52,7 +52,7 @@ class Cell {
   Cell& operator=(const Cell<Tdim>&) = delete;
 
   //! Return id of the cell
-  Index id() const { return id_; }
+  [[nodiscard]] Index id() const { return id_; }
 
   //! Initialise cell properties
   bool initialise();
@@ -68,7 +68,7 @@ class Cell {
   std::vector<Eigen::Matrix<double, Tdim, 1>> generate_points();
 
   //! Return the number of particles
-  unsigned nparticles() const { return particles_.size(); }
+  [[nodiscard]] unsigned nparticles() const { return particles_.size(); }
 
   //! Assign global nparticles
   //! \param[in] nparticles Number of global particles of cell
@@ -78,31 +78,31 @@ class Cell {
 
   //! nglobal particles
   //! \retval nglobal_particles_ Number of global particles of cell
-  unsigned nglobal_particles() const { return nglobal_particles_; }
+  [[nodiscard]] unsigned nglobal_particles() const { return nglobal_particles_; }
 
   //! Return the status of a cell: active (if a particle is present)
   bool status() const { return particles_.size(); }
 
   //! Return particles_
-  std::vector<Index> particles() const { return particles_; }
+  [[nodiscard]] std::vector<Index> particles() const { return particles_; }
 
   //! Number of nodes
-  unsigned nnodes() const { return nodes_.size(); }
+  [[nodiscard]] unsigned nnodes() const { return nodes_.size(); }
 
   //! Return nodes of the cell
-  std::vector<std::shared_ptr<mpm::NodeBase<Tdim>>> nodes() const {
+  [[nodiscard]] std::vector<std::shared_ptr<mpm::NodeBase<Tdim>>> nodes() const {
     return nodes_;
   }
 
   //! Return nodes id in a cell
-  std::set<mpm::Index> nodes_id() const {
+  [[nodiscard]] std::set<mpm::Index> nodes_id() const {
     std::set<mpm::Index> nodes_id_lists;
     for (const auto& node : nodes_) nodes_id_lists.insert(node->id());
     return nodes_id_lists;
   }
 
   //! Side node pair ids
-  std::vector<std::array<mpm::Index, 2>> side_node_pairs() const;
+  [[nodiscard]] std::vector<std::array<mpm::Index, 2>> side_node_pairs() const;
 
   //! Activate nodes if particle is present
   void activate_nodes();
@@ -112,7 +112,7 @@ class Cell {
 
   //! Return the number of shape functions, returns zero if the element type is
   //! not set.
-  unsigned nfunctions() const {
+  [[nodiscard]] unsigned nfunctions() const {
     return (this->element_ != nullptr ? this->element_->nfunctions() : 0);
   };
 
@@ -128,10 +128,10 @@ class Cell {
   bool add_neighbour(mpm::Index neighbour_id);
 
   //! Number of neighbours
-  unsigned nneighbours() const { return neighbours_.size(); }
+  [[nodiscard]] unsigned nneighbours() const { return neighbours_.size(); }
 
   //! Return neighbour ids
-  std::set<mpm::Index> neighbours() const { return neighbours_; }
+  [[nodiscard]] std::set<mpm::Index> neighbours() const { return neighbours_; }
 
   //! Add an id of a particle in the cell
   //! \param[in] id Global id of a particle
@@ -149,36 +149,35 @@ class Cell {
   void compute_volume();
 
   //! Return the volume of the cell
-  double volume() const { return volume_; }
+  [[nodiscard]] double volume() const { return volume_; }
 
   //! Compute the centroid of the cell
   void compute_centroid();
 
   //! Return the centroid of the cell
-  Eigen::Matrix<double, Tdim, 1> centroid() const { return centroid_; }
+  [[nodiscard]] Eigen::Matrix<double, Tdim, 1> centroid() const { return centroid_; }
 
   //! Return the dN/dx at the centroid of the cell
-  Eigen::MatrixXd dn_dx_centroid() const { return dn_dx_centroid_; }
+  [[nodiscard]] Eigen::MatrixXd dn_dx_centroid() const { return dn_dx_centroid_; }
 
   //! Compute mean length of cell
   void compute_mean_length();
 
   //! Return the mean_length
-  double mean_length() const { return mean_length_; }
+  [[nodiscard]] double mean_length() const { return mean_length_; }
 
   //! Compute min length of cell
   void compute_min_length();
 
   //! Return the min_length
-  double min_length() const { return min_length_; }
+  [[nodiscard]] double min_length() const { return min_length_; }
 
   //! Return nodal coordinates
-  Eigen::MatrixXd nodal_coordinates() const { return nodal_coordinates_; }
+  [[nodiscard]] Eigen::MatrixXd nodal_coordinates() const { return nodal_coordinates_; }
 
   //! Check if a point is in a cartesian cell by checking the domain ranges
   //! \param[in] point Coordinates of point
-  inline bool point_in_cartesian_cell(
-      const Eigen::Matrix<double, Tdim, 1>& point);
+  inline bool point_in_cartesian_cell(const Eigen::Matrix<double, Tdim, 1>& point);
 
   //! Check if a point is in a isoparametric cell
   //! Use an affine transformation and NR to check if a transformed point is in
@@ -195,7 +194,7 @@ class Cell {
   //! \param[in] point Coordinates of a point
   //! \retval xi Local coordinates of a point
   inline Eigen::Matrix<double, Tdim, 1> local_coordinates_point(
-      const Eigen::Matrix<double, Tdim, 1>& point);
+    const Eigen::Matrix<double, Tdim, 1>& point);
 
   //! Return the local coordinates of a point in a unit cell
   //! Using newton iteration / affine transformation
@@ -218,10 +217,10 @@ class Cell {
   void rank(unsigned mpi_rank);
 
   //! Return rank
-  unsigned rank() const;
+  [[nodiscard]] unsigned rank() const;
 
   //! Return previous mpi rank
-  unsigned previous_mpirank() const;
+  [[nodiscard]] unsigned previous_mpirank() const;
 
  private:
   //! Approximately check if a point is in a cell

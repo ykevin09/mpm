@@ -6,6 +6,7 @@
 #endif
 
 #include <Eigen/Dense>
+#include <iostream>
 
 namespace mpm {
 

@@ -471,11 +471,17 @@ bool mpm::Particle<Tdim>::assign_volume(double volume) {
       // Get element ptr of a cell
       const auto element = cell_->element_ptr();
 
-      // Set local particle length based on length of element in natural
-      // coordinates. Length/(npartices^(1/Dimension))
+      // Set local particle length based on length of element in natural coordinates.
+      /* // Length/(npartices^(1/Dimension))
       this->natural_size_.fill(
           element->unit_element_length() /
-          std::pow(cell_->nparticles(), static_cast<double>(1. / Tdim)));
+          std::pow(cell_->nparticles(), static_cast<double>(1. / Tdim))); */
+      //
+      const auto cell_volume = cell_->volume();
+      const auto element_volume = std::pow(element->unit_element_length(), Tdim);
+      const auto part_elem_length =
+          std::pow(this->volume_/cell_volume*element_volume, 1./Tdim);
+      this->natural_size_.fill(part_elem_length);
     }
   } catch (std::exception& exception) {
     console_->error("{} #{}: {}\n", __FILE__, __LINE__, exception.what());
@@ -492,6 +498,27 @@ void mpm::Particle<Tdim>::compute_volume() noexcept {
   // Volume of the cell / # of particles
   this->assign_volume(cell_->volume() / cell_->nparticles());
 }
+
+////! Compute volume of the particle
+//template <unsigned Tdim>
+//void mpm::Particle<Tdim>::compute_volume(unsigned int nparticles_per_dir) {
+//  // Check if particle has a valid cell ptr
+//  assert(cell_ != nullptr);
+//  if (cell_->volume() <= 0.)
+//    throw std::runtime_error("Particle volume cannot be negative");
+//  // Volume of the cell / # of particles per dir
+//  this->volume_ = cell_->volume()/std::pow(nparticles_per_dir, Tdim);
+//
+//  // Compute size of particle in each direction
+//  auto element = cell_->element_ptr();
+//  auto nodal_coords = cell_->nodal_coordinates();
+//  auto element_size = (Tdim==2) ? (nodal_coords(2, Eigen::placeholders::all)-nodal_coords(0, Eigen::placeholders::all))
+//                                : (nodal_coords(6, Eigen::placeholders::all)-nodal_coords(0, Eigen::placeholders::all));
+//  for (int i=0; i < Tdim; ++i)
+//    this->size_[i] = std::fabs(element_size(0, i)/nparticles_per_dir);
+//
+//  this->natural_size_.fill(element->unit_element_length()/nparticles_per_dir);
+//}
 
 // Update volume based on the central strain rate
 template <unsigned Tdim>

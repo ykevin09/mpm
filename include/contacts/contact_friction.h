@@ -12,13 +12,13 @@ template <unsigned Tdim>
 class ContactFriction : public Contact<Tdim> {
  public:
   //! Default constructor with mesh class
-  ContactFriction(const std::shared_ptr<mpm::Mesh<Tdim>>& mesh);
+  explicit ContactFriction(const std::shared_ptr<mpm::Mesh<Tdim>>& mesh);
 
   //! Intialize
-  virtual inline void initialise() override;
+  inline void initialise() override;
 
   //! Compute contact forces
-  virtual inline void compute_contact_forces() override;
+  inline void compute_contact_forces() override;
 
  protected:
   //! Mesh object

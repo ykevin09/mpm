@@ -143,7 +143,7 @@ public:
         , last_errno_(last_errno)
     {
     }
-    const char *what() const SPDLOG_NOEXCEPT override
+    [[nodiscard]] const char *what() const SPDLOG_NOEXCEPT override
     {
         if (last_errno_)
         {

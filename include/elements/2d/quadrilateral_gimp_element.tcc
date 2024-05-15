@@ -3,7 +3,6 @@ template <unsigned Tdim, unsigned Tnfunctions>
 inline Eigen::MatrixXd mpm::QuadrilateralGIMPElement<
     Tdim, Tnfunctions>::natural_nodal_coordinates() const {
   //! Natural coordinates of nodes
-  // clang-format off
   const Eigen::Matrix<double, Tnfunctions, Tdim> local_nodes =
   (Eigen::Matrix<double, Tnfunctions, Tdim>() << -1., -1.,
                                       1., -1.,
@@ -21,7 +20,6 @@ inline Eigen::MatrixXd mpm::QuadrilateralGIMPElement<
                                      -3.,  3.,
                                      -3.,  1.,
                                      -3., -1.).finished();
-  // clang-format on
   return local_nodes;
 }
 

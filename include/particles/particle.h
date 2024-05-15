@@ -128,6 +128,9 @@ class Particle : public ParticleBase<Tdim> {
   //! Compute volume as cell volume / nparticles
   void compute_volume() noexcept override;
 
+//  //! Compute volume as cell length / nparticles_per_dir
+//  void compute_volume(unsigned nparticles_per_dir) override;
+
   //! Update volume based on centre volumetric strain rate
   void update_volume() noexcept override;
 

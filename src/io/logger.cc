@@ -37,5 +37,5 @@ const std::shared_ptr<spdlog::logger> mpm::Logger::mpm_explicit_usl_logger =
     spdlog::stdout_color_st("MPMExplicitUSL");
 
 // Create a logger for DDMP Explicit
-const std::shared_ptr<spdlog::logger> mpm::Logger::ddmp_explicit_logger =
-    spdlog::stdout_color_st("DDMPExplicit");
+const std::shared_ptr<spdlog::logger> mpm::Logger::gimp_explicit_logger =
+    spdlog::stdout_color_st("GIMPExplicit");

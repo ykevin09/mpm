@@ -572,8 +572,10 @@ inline Eigen::Matrix<double, Tdim, 1>
   const Eigen::Matrix<double, Tdim, 1> zero =
       Eigen::Matrix<double, Tdim, 1>::Zero();
 
-  // Matrix of nodal coordinates
-  const Eigen::MatrixXd nodal_coords = nodal_coordinates_.transpose();
+  // Matrix of nodal coordinates (corner)
+  // const Eigen::MatrixXd nodal_coords = nodal_coordinates_.transpose();
+  const Eigen::MatrixXd nodal_coords = nodal_coordinates_(indices, Eigen::placeholders::all).transpose();
+
 
   // Analytical xi
   Eigen::Matrix<double, Tdim, 1> analytical_xi;

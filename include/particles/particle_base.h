@@ -52,7 +52,7 @@ class ParticleBase {
   ParticleBase(Index id, const VectorDim& coord, bool status);
 
   //! Destructor
-  virtual ~ParticleBase(){};
+  virtual ~ParticleBase() = default;
 
   //! Delete copy constructor
   ParticleBase(const ParticleBase<Tdim>&) = delete;
@@ -81,18 +81,18 @@ class ParticleBase {
   virtual bool assign_material_state_vars(
       const mpm::dense_map& state_vars,
       const std::shared_ptr<mpm::Material<Tdim>>& material,
-      unsigned phase = mpm::ParticlePhase::Solid) = 0;
+      unsigned phase) = 0;
 
   //! Retrun particle data as HDF5
   //! \retval particle HDF5 data of the particle
   // virtual HDF5Particle hdf5() const = 0;
-  virtual std::shared_ptr<void> hdf5() const = 0;
+  [[nodiscard]] virtual std::shared_ptr<void> hdf5() const = 0;
 
   //! Return id of the particleBase
-  Index id() const { return id_; }
+  [[nodiscard]] Index id() const { return id_; }
 
   //! Return dt of the particleBase
-  virtual double dt() const = 0;
+  [[nodiscard]] virtual double dt() const = 0;
 
   //! Assign coordinates
   //! \param[in] coord Assign coord as coordinates of the particleBase
@@ -119,10 +119,10 @@ class ParticleBase {
   virtual bool assign_cell_id(Index id) = 0;
 
   //! Return cell id
-  virtual Index cell_id() const = 0;
+  [[nodiscard]] virtual Index cell_id() const = 0;
 
   //! Return cell ptr status
-  virtual bool cell_ptr() const = 0;
+  [[nodiscard]] virtual bool cell_ptr() const = 0;
 
   //! Remove cell
   virtual void remove_cell() = 0;
@@ -134,7 +134,7 @@ class ParticleBase {
   virtual bool assign_volume(double volume) = 0;
 
   //! Return volume
-  virtual double volume() const = 0;
+  [[nodiscard]] virtual double volume() const = 0;
 
   //! Return size of particle in natural coordinates
   virtual VectorDim natural_size() const = 0;
@@ -142,11 +142,15 @@ class ParticleBase {
   //! Compute volume of particle
   virtual void compute_volume() noexcept = 0;
 
+//  //! Compute volume of particle
+//  //! \param[in] nparticles_per_dir Number of particles per dir in a cell
+//  virtual void compute_volume(unsigned nparticles_per_dir) = 0;
+
   //! Update volume based on centre volumetric strain rate
   virtual void update_volume() noexcept = 0;
 
   //! Return mass density
-  virtual double mass_density() const = 0;
+  [[nodiscard]] virtual double mass_density() const = 0;
 
   //! Compute mass of particle
   virtual void compute_mass() noexcept = 0;
@@ -165,7 +169,7 @@ class ParticleBase {
 
   //! Assign material
   virtual bool assign_material(const std::shared_ptr<Material<Tdim>>& material,
-                               unsigned phase = mpm::ParticlePhase::Solid) = 0;
+                               unsigned phase) = 0;
 
   //! Return material of particle
   //! \param[in] phase Index to indicate material phase
@@ -176,13 +180,14 @@ class ParticleBase {
 
   //! Return material id
   //! \param[in] phase Index to indicate material phase
-  unsigned material_id(unsigned phase = mpm::ParticlePhase::Solid) const {
+  [[nodiscard]] unsigned material_id(
+    unsigned phase=mpm::ParticlePhase::Solid) const {
     return material_id_[phase];
   }
 
   //! Return state variables
   //! \param[in] phase Index to indicate material phase
-  mpm::dense_map state_variables(
+  [[nodiscard]] mpm::dense_map state_variables(
       unsigned phase = mpm::ParticlePhase::Solid) const {
     return state_variables_[phase];
   }
@@ -191,7 +196,7 @@ class ParticleBase {
   void assign_status(bool status) { status_ = status; }
 
   //! Status
-  bool status() const { return status_; }
+  [[nodiscard]] bool status() const { return status_; }
 
   //! Initialise properties
   virtual void initialise() = 0;
@@ -200,25 +205,25 @@ class ParticleBase {
   virtual void assign_mass(double mass) = 0;
 
   //! Return mass
-  virtual double mass() const = 0;
+  [[nodiscard]] virtual double mass() const = 0;
 
   //! Return pressure
-  virtual double pressure(unsigned phase = mpm::ParticlePhase::Solid) const = 0;
+  [[nodiscard]] virtual double pressure(unsigned phase) const = 0;
 
   //! Compute strain
   virtual void compute_strain(double dt) noexcept = 0;
 
   //! Strain
-  virtual Eigen::Matrix<double, 6, 1> strain() const = 0;
+  [[nodiscard]] virtual Eigen::Matrix<double, 6, 1> strain() const = 0;
 
   //! Strain rate
-  virtual Eigen::Matrix<double, 6, 1> strain_rate() const = 0;
+  [[nodiscard]] virtual Eigen::Matrix<double, 6, 1> strain_rate() const = 0;
 
   //! Volumetric strain of centroid
-  virtual double volumetric_strain_centroid() const = 0;
+  [[nodiscard]] virtual double volumetric_strain_centroid() const = 0;
 
   //! dvolumetric strain
-  virtual double dvolumetric_strain() const = 0;
+  [[nodiscard]] virtual double dvolumetric_strain() const = 0;
 
   //! Initial stress
   virtual void initial_stress(const Eigen::Matrix<double, 6, 1>&) = 0;
@@ -227,7 +232,7 @@ class ParticleBase {
   virtual void compute_stress() noexcept = 0;
 
   //! Return stress
-  virtual Eigen::Matrix<double, 6, 1> stress() const = 0;
+  [[nodiscard]] virtual Eigen::Matrix<double, 6, 1> stress() const = 0;
 
   //! Map body force
   virtual void map_body_force(const VectorDim& pgravity) noexcept = 0;
@@ -236,12 +241,10 @@ class ParticleBase {
   virtual void map_internal_force() noexcept = 0;
 
   //! Map particle pressure to nodes
-  virtual bool map_pressure_to_nodes(
-      unsigned phase = mpm::ParticlePhase::Solid) noexcept = 0;
+  virtual bool map_pressure_to_nodes(unsigned phase) noexcept = 0;
 
   //! Compute pressure smoothing of the particle based on nodal pressure
-  virtual bool compute_pressure_smoothing(
-      unsigned phase = mpm::ParticlePhase::Solid) noexcept = 0;
+  virtual bool compute_pressure_smoothing(unsigned phase) noexcept = 0;
 
   //! Assign velocity
   virtual bool assign_velocity(const VectorDim& velocity) = 0;
@@ -262,18 +265,16 @@ class ParticleBase {
   virtual void map_traction_force() noexcept = 0;
 
   //! Compute updated position
-  virtual void compute_updated_position(
-      double dt, bool velocity_update = false) noexcept = 0;
+  virtual void compute_updated_position(double dt, bool velocity_update) = 0;
 
   //! Return a state variable
-  virtual double state_variable(
-      const std::string& var,
-      unsigned phase = mpm::ParticlePhase::Solid) const = 0;
+  [[nodiscard]] virtual double state_variable(const std::string& var,
+                                              unsigned phase) const = 0;
 
   //! Return scalar data of particles
   //! \param[in] property Property string
   //! \retval data Scalar data of particle property
-  virtual double scalar_data(const std::string& property) const = 0;
+  [[nodiscard]] virtual double scalar_data(const std::string& property) const = 0;
 
   //! Return vector data of particles
   //! \param[in] property Property string
@@ -283,7 +284,7 @@ class ParticleBase {
   //! Return tensor data of particles
   //! \param[in] property Property string
   //! \retval data Tensor data of particle property
-  virtual Eigen::VectorXd tensor_data(const std::string& property) const = 0;
+  [[nodiscard]] virtual Eigen::VectorXd tensor_data(const std::string& property) const = 0;
 
   //! Apply particle velocity constraints
   //! \param[in] dir Direction of particle velocity constraint
@@ -295,7 +296,7 @@ class ParticleBase {
   virtual void append_material_id_to_nodes() const = 0;
 
   //! Return the number of neighbour particles
-  virtual unsigned nneighbours() const = 0;
+  [[nodiscard]] virtual unsigned nneighbours() const = 0;
 
   //! Assign neighbour particles
   //! \param[in] neighbours set of id of the neighbouring particles
@@ -303,10 +304,10 @@ class ParticleBase {
   virtual void assign_neighbours(const std::vector<mpm::Index>& neighbours) = 0;
 
   //! Return neighbour ids
-  virtual std::vector<mpm::Index> neighbours() const = 0;
+  [[nodiscard]] virtual std::vector<mpm::Index> neighbours() const = 0;
 
   //! Type of particle
-  virtual std::string type() const = 0;
+  [[nodiscard]] virtual std::string type() const = 0;
 
   //! Serialize
   //! \retval buffer Serialized buffer data
@@ -314,7 +315,7 @@ class ParticleBase {
 
   //! Deserialize
   //! \param[in] buffer Serialized buffer data
-  //! \param[in] material Particle material pointers
+  //! \param[in] materials Particle material pointers
   virtual void deserialize(
       const std::vector<uint8_t>& buffer,
       std::vector<std::shared_ptr<mpm::Material<Tdim>>>& materials) = 0;
@@ -347,4 +348,4 @@ class ParticleBase {
 
 #include "particle_base.tcc"
 
-#endif  // MPM_PARTICLEBASE_H__
+#endif  // MPM_PARTICLEBASE_H_

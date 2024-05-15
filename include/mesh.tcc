@@ -406,13 +406,15 @@ void mpm::Mesh<Tdim>::find_ghost_boundary_cells() {
         }
       }
       // Set the number of different MPI rank neighbours to a ghost cell
-      if (neighbour_ranks.size() > 0) {
+      if (!neighbour_ranks.empty()) {
         // Also add the current cell, as this would be a receiver
         local_ghost_cells_.add(*citr, check_duplicates);
 
         // Update the neighbouring ranks of the local ghost cell
         std::vector<unsigned> mpi_neighbours;
-        for (auto rank : neighbour_ranks) mpi_neighbours.emplace_back(rank);
+        mpi_neighbours.reserve(neighbour_ranks.size());
+        for (auto rank : neighbour_ranks)
+          mpi_neighbours.emplace_back(rank);
         ghost_cells_neighbour_ranks_[(*citr)->id()] = mpi_neighbours;
       }
     }
@@ -1763,14 +1765,13 @@ bool mpm::Mesh<Tdim>::generate_particles(const std::shared_ptr<mpm::IO>& io,
     // Generate particles from file
     if (generator_type == "file") {
       // Particle set id
-      unsigned pset_id = generator["pset_id"].template get<unsigned>();
+      auto pset_id = generator["pset_id"].template get<unsigned>();
       status = this->read_particles_file(io, generator, pset_id);
     }
-
     // Generate material points at the Gauss location in all cells
     else if (generator_type == "gauss") {
       // Number of particles per dir
-      unsigned nparticles_dir =
+      auto nparticles_dir =
           generator["nparticles_per_dir"].template get<unsigned>();
       // Particle type
       auto particle_type =
@@ -1786,7 +1787,7 @@ bool mpm::Mesh<Tdim>::generate_particles(const std::shared_ptr<mpm::IO>& io,
       // Cell set id
       int cset_id = generator["cset_id"].template get<int>();
       // Particle set id
-      unsigned pset_id = generator["pset_id"].template get<unsigned>();
+      auto pset_id = generator["pset_id"].template get<unsigned>();
       status = this->generate_material_points(nparticles_dir, particle_type,
                                               material_ids, cset_id, pset_id);
     }
@@ -1826,7 +1827,6 @@ bool mpm::Mesh<Tdim>::generate_particles(const std::shared_ptr<mpm::IO>& io,
       // Add to particle injections
       particle_injections_.emplace_back(inject);
     }
-
     else
       throw std::runtime_error(
           "Particle generator type is not properly specified");
@@ -1928,7 +1928,7 @@ bool mpm::Mesh<Tdim>::read_particles_file(const std::shared_ptr<mpm::IO>& io,
     material_ids.emplace_back(
         generator["material_id"].template get<unsigned>());
 
-  const std::string reader = generator["io_type"].template get<std::string>();
+  const auto reader = generator["io_type"].template get<std::string>();
 
   // Create a particle reader
   auto particle_io = Factory<mpm::IOMesh<Tdim>>::instance()->create(reader);

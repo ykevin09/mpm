@@ -58,7 +58,7 @@ class Mesh {
   // Construct a mesh with a global unique id
   //! \param[in] id Global mesh id
   //! \param[in] isoparametric Mesh is isoparametric
-  Mesh(unsigned id, bool isoparametric = true);
+  explicit Mesh(unsigned id, bool isoparametric = true);
 
   //! Default destructor
   ~Mesh() = default;
@@ -70,10 +70,10 @@ class Mesh {
   Mesh& operator=(const Mesh<Tdim>&) = delete;
 
   //! Return id of the mesh
-  unsigned id() const { return id_; }
+  [[nodiscard]] unsigned id() const { return id_; }
 
   //! Return if a mesh is isoparametric
-  bool is_isoparametric() const { return isoparametric_; }
+  [[nodiscard]] bool is_isoparametric() const { return isoparametric_; }
 
   //! Create nodes from coordinates
   //! \param[in] gnid Global node id
@@ -98,7 +98,7 @@ class Mesh {
   bool remove_node(const std::shared_ptr<mpm::NodeBase<Tdim>>& node);
 
   //! Return the number of nodes
-  mpm::Index nnodes() const { return nodes_.size(); }
+  [[nodiscard]] mpm::Index nnodes() const { return nodes_.size(); }
 
   //! Return the number of nodes in rank
   mpm::Index nnodes_rank();
@@ -151,7 +151,7 @@ class Mesh {
   //! \param[in] cells Node ids of cells
   //! \param[in] check_duplicates Parameter to check duplicates
   //! \retval status Create cells status
-  bool create_cells(mpm::Index gnid,
+  bool create_cells(mpm::Index gcid,
                     const std::shared_ptr<mpm::Element<Tdim>>& element,
                     const std::vector<std::vector<mpm::Index>>& cells,
                     bool check_duplicates = true);
@@ -169,7 +169,7 @@ class Mesh {
   bool remove_cell(const std::shared_ptr<mpm::Cell<Tdim>>& cell);
 
   //! Number of cells in the mesh
-  mpm::Index ncells() const { return cells_.size(); }
+  [[nodiscard]] mpm::Index ncells() const { return cells_.size(); }
 
   //! Number of cells in mesh rank
   mpm::Index ncells_rank(bool active_cells = false);
@@ -235,10 +235,10 @@ class Mesh {
   void find_domain_shared_nodes();
 
   //! Find number of domain shared nodes in local rank
-  mpm::Index nshared_nodes() const { return domain_shared_nodes_.size(); }
+  [[nodiscard]] mpm::Index nshared_nodes() const { return domain_shared_nodes_.size(); }
 
   //! Number of particles in the mesh
-  mpm::Index nparticles() const { return particles_.size(); }
+  [[nodiscard]] mpm::Index nparticles() const { return particles_.size(); }
 
   //! Locate particles in a cell
   //! Iterate over all cells in a mesh to find the cell in which particles
@@ -263,12 +263,12 @@ class Mesh {
   //! Return particles scalar data
   //! \param[in] attribute Name of the scalar data attribute
   //! \retval scalar_data Vector containing scalar properties from particles
-  std::vector<double> particles_scalar_data(const std::string& attribute) const;
+  [[nodiscard]] std::vector<double> particles_scalar_data(const std::string& attribute) const;
 
   //! Return particles vector data
   //! \param[in] attribute Name of the tensor data attribute
   //! \retval vector_data Vector containing vector properties from particles
-  std::vector<Eigen::Matrix<double, 3, 1>> particles_vector_data(
+  [[nodiscard]] std::vector<Eigen::Matrix<double, 3, 1>> particles_vector_data(
       const std::string& attribute) const;
 
   //! Return particles tensor data
@@ -343,11 +343,11 @@ class Mesh {
 
   //! Return particles cells
   //! \retval particles_cells Particles and cells
-  std::vector<std::array<mpm::Index, 2>> particles_cells() const;
+  [[nodiscard]] std::vector<std::array<mpm::Index, 2>> particles_cells() const;
 
   //! Return status of the mesh. A mesh is active, if at least one particle is
   //! present
-  bool status() const { return particles_.size(); }
+  [[nodiscard]] bool status() const { return particles_.size(); }
 
   //! Generate points
   //! \param[in] nquadratures Number of points per direction in cell
@@ -377,16 +377,15 @@ class Mesh {
   //! \param[in] cell of interest
   void find_particle_neighbours(const std::shared_ptr<mpm::Cell<Tdim>>& cell);
 
-  //! Add a neighbour mesh, using the local id for the new mesh and a mesh
-  //! pointer
+  //! Add a neighbour mesh, using the local id for the new mesh and a mesh pointer
   //! \param[in] local_id local id of the mesh
-  //! \param[in] neighbour A shared pointer to the neighbouring mesh
+  //! \param[in] mesh A shared pointer to the neighbouring mesh
   //! \retval insertion_status Return the successful addition of a node
   bool add_neighbour(unsigned local_id,
-                     const std::shared_ptr<Mesh<Tdim>>& neighbour);
+                     const std::shared_ptr<Mesh<Tdim>>& mesh);
 
   //! Return the number of neighbouring meshes
-  unsigned nneighbours() const { return neighbour_meshes_.size(); }
+  [[nodiscard]] unsigned nneighbours() const { return neighbour_meshes_.size(); }
 
   //! Find ghost boundary cells
   void find_ghost_boundary_cells();
@@ -405,13 +404,13 @@ class Mesh {
 
   //! Return HDF5 particles
   //! \retval particles_hdf5 Vector of HDF5 particles
-  std::vector<mpm::HDF5Particle> particles_hdf5() const;
+  [[nodiscard]] std::vector<mpm::HDF5Particle> particles_hdf5() const;
 
   //! Return nodal coordinates
-  std::vector<Eigen::Matrix<double, 3, 1>> nodal_coordinates() const;
+  [[nodiscard]] std::vector<Eigen::Matrix<double, 3, 1>> nodal_coordinates() const;
 
   //! Return node pairs
-  std::vector<std::array<mpm::Index, 2>> node_pairs(bool active = false) const;
+  [[nodiscard]] std::vector<std::array<mpm::Index, 2>> node_pairs(bool active = false) const;
 
   //! Create map of vector of particles in sets
   //! \param[in] map of particles ids in sets
@@ -444,10 +443,10 @@ class Mesh {
   std::map<mpm::Index, mpm::Index>* particles_cell_ids();
 
   //! Return nghost cells
-  unsigned nghost_cells() const { return ghost_cells_.size(); }
+  [[nodiscard]] unsigned nghost_cells() const { return ghost_cells_.size(); }
 
   //! Return nlocal ghost cells
-  unsigned nlocal_ghost_cells() const { return local_ghost_cells_.size(); }
+  [[nodiscard]] unsigned nlocal_ghost_cells() const { return local_ghost_cells_.size(); }
 
   //! Generate particles
   //! \param[in] io IO object handle
@@ -464,6 +463,15 @@ class Mesh {
   // Initialise the nodal properties' map
   void initialise_nodal_properties();
 
+  //! Return cell
+  //! \param[in] cell_id cell id
+  //! \retval cell
+  std::shared_ptr<Cell<Tdim>> cell(Index cell_id) const{
+    return map_cells_[cell_id]; }
+
+//  //! Return number of particles per dir
+//  unsigned nparticles_per_dir() const { return nparticles_per_dir_; }
+
  private:
   // Read particles from file
   //! \param[in] pset_id Set ID of the particles
@@ -474,7 +482,6 @@ class Mesh {
   bool locate_particle_cells(
       const std::shared_ptr<mpm::ParticleBase<Tdim>>& particle);
 
- private:
   //! mesh id
   unsigned id_{std::numeric_limits<unsigned>::max()};
   //! Isoparametric mesh
@@ -532,6 +539,8 @@ class Mesh {
   unsigned nhalo_nodes_{0};
   //! Maximum number of halo nodes
   unsigned ncomms_{0};
+//  //! Number of particles per dir
+//  unsigned nparticles_per_dir_{1};
 };  // Mesh class
 }  // namespace mpm
 

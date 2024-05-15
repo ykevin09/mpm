@@ -192,7 +192,7 @@ void mpm::MPMBase<Tdim>::initialise_mesh() {
   // Get mesh properties
   auto mesh_props = io_->json_object("mesh");
   // Get Mesh reader from JSON object
-  const std::string io_type = mesh_props["io_type"].template get<std::string>();
+  const auto io_type = mesh_props["io_type"].template get<std::string>();
 
   bool check_duplicates = true;
   try {
@@ -257,7 +257,7 @@ void mpm::MPMBase<Tdim>::initialise_mesh() {
   // Create cells from file
   bool cell_status =
       mesh_->create_cells(gid,                                  // global id
-                          element,                              // element tyep
+                          element,                              // element type
                           mesh_io->read_mesh_cells(mesh_file),  // Node ids
                           check_duplicates);                    // Check dups
 
@@ -294,7 +294,7 @@ void mpm::MPMBase<Tdim>::initialise_particles() {
   // Get mesh properties
   auto mesh_props = io_->json_object("mesh");
   // Get Mesh reader from JSON object
-  const std::string io_type = mesh_props["io_type"].template get<std::string>();
+  const auto io_type = mesh_props["io_type"].template get<std::string>();
 
   // Check duplicates default set to true
   bool check_duplicates = true;
@@ -311,8 +311,8 @@ void mpm::MPMBase<Tdim>::initialise_particles() {
     bool gen_status =
         mesh_->generate_particles(io_, json_particle["generator"]);
     if (!gen_status)
-      std::runtime_error(
-          "mpm::base::init_particles() Generate particles failed");
+      throw std::runtime_error(
+        "mpm::base::init_particles() Generate particles failed");
   }
 
   auto particles_gen_end = std::chrono::steady_clock::now();
@@ -348,7 +348,7 @@ void mpm::MPMBase<Tdim>::initialise_particles() {
                      .count());
 
   auto particles_volume_begin = std::chrono::steady_clock::now();
-  // Compute volume
+  // Compute particle volume
   mesh_->iterate_over_particles(std::bind(
       &mpm::ParticleBase<Tdim>::compute_volume, std::placeholders::_1));
 
@@ -1001,7 +1001,7 @@ void mpm::MPMBase<Tdim>::particles_cells(
     const std::shared_ptr<mpm::IOMesh<Tdim>>& particle_io) {
   try {
     if (mesh_props.find("particle_cells") != mesh_props.end()) {
-      std::string fparticles_cells =
+      auto fparticles_cells =
           mesh_props["particle_cells"].template get<std::string>();
 
       if (!io_->file_name(fparticles_cells).empty()) {
@@ -1028,7 +1028,7 @@ void mpm::MPMBase<Tdim>::particles_volumes(
     const std::shared_ptr<mpm::IOMesh<Tdim>>& particle_io) {
   try {
     if (mesh_props.find("particles_volumes") != mesh_props.end()) {
-      std::string fparticles_volumes =
+      auto fparticles_volumes =
           mesh_props["particles_volumes"].template get<std::string>();
       if (!io_->file_name(fparticles_volumes).empty()) {
         bool particles_volumes =
